@@ -20,13 +20,16 @@ public class User {
     private Long id;
 
     @Column(name = "username")
-    private String username;
-
-    @Column(name = "fullName")
-    private String fullName;
+    private String username;;
 
     @Column(name = "email")
     private String email;
+
+    @Column (name ="firstName")
+    private String firstName;
+
+    @Column (name = "lastName")
+    private String lastName;
 
     @Column(name = "password")
     private String password;
@@ -69,7 +72,8 @@ public class User {
         return "User{"
                 + "id=" + id
                 + ", username='" + username + '\''
-                + ", fullName='" + fullName + '\''
+                + ", firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
                 + ", email='" + email + '\''
                 + ", password='" + password + '\''
                 + '}';

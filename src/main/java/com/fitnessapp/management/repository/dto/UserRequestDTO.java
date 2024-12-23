@@ -7,9 +7,8 @@ import lombok.Data;
 public class UserRequestDTO {
     private Long id;
     private String username;
-    private String fullName;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
-    private Role role;
-    private AvatarDTO avatar;
 }

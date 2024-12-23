@@ -9,7 +9,8 @@ public class UserSecurityDTO {
     private Long id;
     private Role role;
     private String email;
-    private String fullName;
+    private String firstName;
+    private String lastName;
     private String avatarId;
     private Boolean isFirstLogin;
 }

@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userOptional.get();
-        return new AuthResponse(user.getUsername(), "Login successful!", user.getFullName());
+        return new AuthResponse(user.getUsername(), "Login successful!",user.getFirstName(), user.getLastName(), user.getEmail());
     }
 
     @Override
@@ -43,10 +43,19 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setRole(Role.CLIENT);
-        user.setFullName(registerRequest.getFullName());
         userRepository.save(user);
-        return new AuthResponse(user.getUsername(), "Registration successful!", user.getFullName());
+        return new AuthResponse(
+                user.getUsername(),
+                "Registration successful!",
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
+
     }
+
 }

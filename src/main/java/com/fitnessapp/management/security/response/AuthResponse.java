@@ -8,11 +8,15 @@ import lombok.Setter;
 public class AuthResponse {
     private String username;
     private String message;
-    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String email;
 
-    public AuthResponse(String username, String message, String fullName) {
+    public AuthResponse(String username, String message, String firstName, String lastName, String email) {
         this.username = username;
         this.message = message;
-        this.fullName = fullName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
     }
 }
