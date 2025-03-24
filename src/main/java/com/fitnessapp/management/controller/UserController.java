@@ -2,6 +2,7 @@ package com.fitnessapp.management.controller;
 
 import com.fitnessapp.management.repository.dto.UserRequestDTO;
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
+import com.fitnessapp.management.repository.dto.UserSecurityDTO;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import com.fitnessapp.management.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public class UserController {
     }
 
     @GetMapping("/username/{username}")
-    public UserResponseDTO getUserByUsername(@PathVariable String username) {
-        return userService.getUserByUsername(username);
+    public UserSecurityDTO getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username, UserSecurityDTO.class);
     }
 
     @GetMapping("/email/{email}")

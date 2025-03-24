@@ -1,22 +1,18 @@
 package com.fitnessapp.management.security.response;
 
+import com.fitnessapp.management.repository.dto.UserSecurityDTO;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
-public class AuthResponse {
-    private String username;
-    private String message;
-    private String firstName;
-    private String lastName;
-    private String email;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-    public AuthResponse(String username, String message, String firstName, String lastName, String email) {
-        this.username = username;
-        this.message = message;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
+import java.util.Date;
+
+@Data
+@AllArgsConstructor
+public class AuthResponse {
+    private Date accessTokenExpiryDate;
+    private Date refreshTokenExpiryDate;
+    private UserSecurityDTO userData;
 }

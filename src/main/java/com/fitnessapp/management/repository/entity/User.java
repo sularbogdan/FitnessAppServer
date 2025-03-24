@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,32 +21,17 @@ public class User {
     private Long id;
 
     @Column(name = "username")
-    private String username;;
+    private String username;
 
     @Column(name = "email")
     private String email;
 
-    @Column (name ="firstName")
-    private String firstName;
-
-    @Column (name = "lastName")
-    private String lastName;
-
     @Column(name = "password")
     private String password;
-
-    @Column(name = "has_password")
-    private boolean hasPassword;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @Column(name = "is_first_login")
-    private Boolean firstLogin;
-
-    @Embedded
-    private OTP otp;
 
     @Column(name = "is_active")
     private boolean isActive;
@@ -62,6 +48,9 @@ public class User {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
     public User(String username, String email) {
         this.username = username;
         this.email = email;
@@ -72,8 +61,6 @@ public class User {
         return "User{"
                 + "id=" + id
                 + ", username='" + username + '\''
-                + ", firstName='" + firstName + '\''
-                + ", lastName='" + lastName + '\''
                 + ", email='" + email + '\''
                 + ", password='" + password + '\''
                 + '}';

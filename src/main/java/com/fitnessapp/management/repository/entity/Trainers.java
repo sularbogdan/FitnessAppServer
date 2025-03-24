@@ -19,12 +19,6 @@ public class Trainers {
     @Column(name = "trainer_id")
     private Long id;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
     @Column(name = "specialisation")
     @Enumerated(EnumType.STRING)
     private Specialisation specialisation;

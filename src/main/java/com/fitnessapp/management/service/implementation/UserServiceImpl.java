@@ -2,7 +2,6 @@ package com.fitnessapp.management.service.implementation;
 
 import com.fitnessapp.management.exception.*;
 import com.fitnessapp.management.repository.UserRepository;
-import com.fitnessapp.management.repository.dto.UserRequestDTO;
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import com.fitnessapp.management.repository.entity.User;
@@ -14,13 +13,26 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
     private final MapperConfig mapperConfig;
-
 
     public UserServiceImpl(UserRepository userRepository, MapperConfig mapperConfig) {
         this.userRepository = userRepository;
         this.mapperConfig = mapperConfig;
+    }
+
+    @Override
+    public UserResponseDTO addUser(String username, String email) {
+        if (userRepository.findByUsernameOrEmail(username, email).isPresent()) {
+            throw new UserAlreadyExistsException("User already exists!");
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setRole(Role.CLIENT);
+        return mapperConfig.mapToDto(userRepository.save(user), UserResponseDTO.class);
     }
 
     @Override
@@ -31,10 +43,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO getUserByUsername(String username){
+    public <T> T getUserByUsername(String username, Class<T> type){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
-        return mapperConfig.mapToDto(user, UserResponseDTO.class);
+        return mapperConfig.mapToDto(user, type);
     }
 
     @Override
@@ -65,13 +77,6 @@ public class UserServiceImpl implements UserService {
         return mapperConfig.mapToList(users, UserResponseDTO.class);
     }
 
-    @Override
-    public Boolean isFirstLogin(String usernameOrEmail) {
-        User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new UserNotFoundException("User not found!"));
-        return user.getFirstLogin();
-
-    }
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)

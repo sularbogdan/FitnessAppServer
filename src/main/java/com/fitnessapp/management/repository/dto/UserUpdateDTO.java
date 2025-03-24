@@ -6,8 +6,6 @@ import lombok.Data;
 public class UserUpdateDTO {
         private Long Id;
         private String username;
-        private String firstName;
-        private String lastName;
         private String email;
         private Long avatarId;
         private ImageDTO image;

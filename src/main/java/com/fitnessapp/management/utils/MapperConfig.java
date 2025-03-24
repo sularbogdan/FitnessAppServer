@@ -1,5 +1,6 @@
 package com.fitnessapp.management.utils;
 
+import com.fitnessapp.management.repository.dto.UserSecurityDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -28,4 +29,9 @@ public class MapperConfig {
                 .map(entity -> mapToDto(entity, outClass))
                 .collect(Collectors.toList());
     }
+
+    public UserSecurityDTO mapToUserSecurityDTO(Object entity) {
+        return modelMapper.map(entity, UserSecurityDTO.class);
+    }
+
 }
