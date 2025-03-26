@@ -10,4 +10,6 @@ public class UserResponseDTO {
     private String email;
     private Role role;
     private AvatarDTO avatar;
+    private String firstName;
+    private String lastName;
 }

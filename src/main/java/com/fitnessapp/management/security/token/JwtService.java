@@ -3,6 +3,7 @@ package com.fitnessapp.management.security.token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnessapp.management.repository.BlacklistedAccessTokenRepository;
 import com.fitnessapp.management.repository.dto.UserSecurityDTO;
+import com.fitnessapp.management.repository.entity.BlacklistedAccessToken;
 import com.fitnessapp.management.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -108,5 +109,12 @@ public class JwtService {
         } catch (Exception ignored) {
 
         }
+    }
+    public void blacklistToken(String token) {
+        Date expiry = extractExpiration(token);
+        BlacklistedAccessToken blacklistedToken = new BlacklistedAccessToken();
+        blacklistedToken.setToken(token);
+        blacklistedToken.setExpiry(expiry);
+        blacklistedAccessTokenRepository.save(blacklistedToken);
     }
 }

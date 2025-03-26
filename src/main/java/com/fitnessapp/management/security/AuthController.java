@@ -67,6 +67,8 @@ public class AuthController {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setFirstName(signUpRequest.getFirstName());
+        user.setLastName(signUpRequest.getLastName());
         userRepository.save(user);
 
         return new ResponseEntity<>(userResponseDTO, HttpStatus.CREATED);
@@ -82,8 +84,12 @@ public class AuthController {
     @Transactional
     @PostMapping("/logout")
     public ResponseEntity<String> logoutUser(HttpServletRequest request) {
-        sessionService.extractToken(request, refreshTokenService.getTokenConfig())
-                .ifPresent(refreshTokenService::invalidateToken);
+        sessionService.extractToken(request, jwtService.getTokenConfig())
+                .ifPresent(token -> {
+                    refreshTokenService.invalidateToken(token);
+                    jwtService.blacklistToken(token);
+                });
+
         return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
     }
 

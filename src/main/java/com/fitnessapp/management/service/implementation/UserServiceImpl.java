@@ -32,6 +32,8 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         user.setEmail(email);
         user.setRole(Role.CLIENT);
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
         return mapperConfig.mapToDto(userRepository.save(user), UserResponseDTO.class);
     }
 

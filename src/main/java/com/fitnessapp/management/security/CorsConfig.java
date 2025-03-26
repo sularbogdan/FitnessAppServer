@@ -1,35 +1,37 @@
 package com.fitnessapp.management.security;
 
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
-@Component
+import java.util.Arrays;
+
+@Configuration
 public class CorsConfig {
 
     @Value("${cors.allowedOrigins}")
     private String allowedOrigin;
 
     @Value("${cors.allowedMethods}")
-    private String allowedMethod;
+    private String allowedMethods;
 
     @Value("${cors.allowedHeaders}")
     private String allowedHeaders;
-
 
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin(allowedOrigin);
-        config.addAllowedHeader(allowedHeaders);
-        config.addAllowedMethod(allowedMethod);
+        config.setAllowedOrigins(Arrays.asList(allowedOrigin.split(",")));
+        config.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
+        config.setAllowedMethods(Arrays.asList(allowedMethods.split(",")));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter();
+
+        return new CorsFilter(source);
     }
 }

@@ -26,6 +26,12 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
     @Column(name = "password")
     private String password;
 
@@ -62,6 +68,8 @@ public class User {
                 + "id=" + id
                 + ", username='" + username + '\''
                 + ", email='" + email + '\''
+                + ", first_name='" + firstName + '\''
+                + ", last_name='" + lastName + '\''
                 + ", password='" + password + '\''
                 + '}';
     }

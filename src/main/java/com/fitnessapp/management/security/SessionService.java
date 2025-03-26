@@ -20,7 +20,8 @@ public class SessionService {
     public ResponseCookie createTokenCookie(String sessionId, String token, TokenConfig tokenConfig) {
         return ResponseCookie.from(getIdentifier(tokenConfig.getType(), sessionId), token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
+                .sameSite("None")
                 .path(tokenConfig.getPath())
                 .maxAge(tokenConfig.getExpirySeconds())
                 .build();
