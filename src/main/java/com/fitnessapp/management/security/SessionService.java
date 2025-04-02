@@ -28,8 +28,13 @@ public class SessionService {
     }
 
     public Optional<String> extractToken(HttpServletRequest request, TokenConfig tokenConfig) {
-        String tokenIdentifier = getIdentifier(tokenConfig.getType(), extractSessionHeader(request));
-        return getTokenFromCookies(request.getCookies(), tokenIdentifier);
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return Optional.of(authHeader.substring(7));
+        }
+
+        return getTokenFromCookies(request.getCookies(), tokenConfig.getType());
     }
 
     private Optional<String> getTokenFromCookies(Cookie[] cookies, String identifier) {

@@ -1,5 +1,6 @@
 package com.fitnessapp.management.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,14 +14,26 @@ import lombok.NoArgsConstructor;
 public class Avatar {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "avatar_id")
     private Long id;
 
-    @Column(name = "data", length = 2000)
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "file_type")
+    private String fileType;
+
+    @Column(name = "data", length = 10000)
     private byte[] data;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @OneToOne(mappedBy = "avatar")
+    @JsonBackReference
     private User user;
+
+    public Avatar(String fileName, byte[] data, String fileType) {
+        this.fileName = fileName;
+        this.data = data;
+        this.fileType = fileType;
+    }
 }

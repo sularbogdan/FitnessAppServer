@@ -5,11 +5,13 @@ import lombok.Data;
 
 @Data
 public class UserResponseDTO {
-    private Long id;
     private String username;
     private String email;
-    private Role role;
-    private AvatarDTO avatar;
     private String firstName;
     private String lastName;
+    private String role;
+    private byte[] avatarData;
+    private String avatarFileName;
+    private String avatarFileType;
 }
+

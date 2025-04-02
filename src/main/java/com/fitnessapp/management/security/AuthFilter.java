@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -33,35 +36,44 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         try {
+            String requestUri = request.getRequestURI();
+
+            boolean isPublic = Arrays.stream(publicRoutes)
+                    .map(route -> route.replaceAll("\\*", ""))
+                    .anyMatch(requestUri::contains);
+
+            if (isPublic) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             sessionService.extractToken(request, jwtService.getTokenConfig())
                     .ifPresent(token -> {
-                        if (Arrays.stream(publicRoutes)
-                                .map(route -> route.replaceAll("\\*", ""))
-                                .anyMatch(route -> request.getRequestURI().contains(route))) {
-                            return;
-                        }
-
                         String username = jwtService.extractUsername(token);
 
-                        if (username != null) {
+                        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
                             if (jwtService.validateToken(token, userDetails)) {
-                                UsernamePasswordAuthenticationToken authenticationToken =
+                                String role = jwtService.extractClaim(token, claims -> claims.get("role", String.class));
+                                GrantedAuthority authority = new SimpleGrantedAuthority(role);
+
+                                UsernamePasswordAuthenticationToken auth =
                                         new UsernamePasswordAuthenticationToken(
                                                 userDetails,
                                                 null,
-                                                userDetails.getAuthorities());
-                                authenticationToken.setDetails(new WebAuthenticationDetailsSource()
-                                        .buildDetails(request));
-                                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                                                Collections.singletonList(authority)
+                                        );
+                                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                                SecurityContextHolder.getContext().setAuthentication(auth);
                             }
                         }
                     });
-
             filterChain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.ExpiredJwtException | RefreshTokenExpiredException ignored) {
         }
     }
+
 }

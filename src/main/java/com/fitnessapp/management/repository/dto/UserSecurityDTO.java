@@ -9,4 +9,6 @@ public class UserSecurityDTO {
     private Long id;
     private String email;
     private String avatarId;
+    private String firstName;
+    private String lastName;
 }

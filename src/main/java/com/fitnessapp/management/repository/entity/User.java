@@ -1,5 +1,6 @@
 package com.fitnessapp.management.repository.entity;
 
+import com.fitnessapp.management.repository.dto.ImageDTO;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,21 +10,22 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @Entity
 @Table(name = "\"user\"")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "first_name")
@@ -35,12 +37,20 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
 
     @Column(name = "is_active")
     private boolean isActive;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "custom_avatar_file_name")),
+            @AttributeOverride(name = "image", column = @Column(name = "custom_avatar_data", length = 10000)),
+            @AttributeOverride(name = "fileType", column = @Column(name = "custom_avatar_file_type"))
+    })
+    private ImageDTO image;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Trainers trainer;
@@ -48,7 +58,9 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Memberships memberships;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+
+    @OneToOne
+    @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
@@ -64,13 +76,13 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{"
-                + "id=" + id
-                + ", username='" + username + '\''
-                + ", email='" + email + '\''
-                + ", first_name='" + firstName + '\''
-                + ", last_name='" + lastName + '\''
-                + ", password='" + password + '\''
-                + '}';
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

@@ -58,19 +58,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest signUpRequest) {
-        UserResponseDTO userResponseDTO = userService.addUser(
-                signUpRequest.getUsername(),
-                signUpRequest.getEmail()
-        );
-
-        var user = userRepository.findByUsername(userResponseDTO.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        user.setFirstName(signUpRequest.getFirstName());
-        user.setLastName(signUpRequest.getLastName());
-        userRepository.save(user);
-
+        UserResponseDTO userResponseDTO = userService.addUser(signUpRequest);
         return new ResponseEntity<>(userResponseDTO, HttpStatus.CREATED);
     }
 
@@ -89,7 +77,6 @@ public class AuthController {
                     refreshTokenService.invalidateToken(token);
                     jwtService.blacklistToken(token);
                 });
-
         return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
     }
 
@@ -107,7 +94,6 @@ public class AuthController {
                         loginRequest.getPassword()
                 )
         );
-
         if (authentication.isAuthenticated()) {
             String accessToken = jwtService.generateToken(authentication.getName());
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(authentication.getName());

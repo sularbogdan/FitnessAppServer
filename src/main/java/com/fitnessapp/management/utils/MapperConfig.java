@@ -1,6 +1,9 @@
 package com.fitnessapp.management.utils;
 
+import com.fitnessapp.management.repository.dto.UserResponseDTO;
 import com.fitnessapp.management.repository.dto.UserSecurityDTO;
+import com.fitnessapp.management.repository.entity.User;
+import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -33,5 +36,16 @@ public class MapperConfig {
     public UserSecurityDTO mapToUserSecurityDTO(Object entity) {
         return modelMapper.map(entity, UserSecurityDTO.class);
     }
+
+    @PostConstruct
+    public void setupMappings() {
+        modelMapper.typeMap(User.class, UserResponseDTO.class).addMappings(mapper -> {
+            mapper.map(src -> src.getAvatar().getData(), UserResponseDTO::setAvatarData);
+            mapper.map(src -> src.getAvatar().getFileName(), UserResponseDTO::setAvatarFileName);
+            mapper.map(src -> src.getAvatar().getFileType(), UserResponseDTO::setAvatarFileType);
+        });
+    }
+
+
 
 }
