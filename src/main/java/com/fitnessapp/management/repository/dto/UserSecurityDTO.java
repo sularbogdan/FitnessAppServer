@@ -11,4 +11,6 @@ public class UserSecurityDTO {
     private String avatarId;
     private String firstName;
     private String lastName;
+    private String role;
+
 }
