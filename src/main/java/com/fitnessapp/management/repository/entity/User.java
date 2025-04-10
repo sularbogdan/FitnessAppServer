@@ -59,15 +59,23 @@ public class User {
     private Memberships memberships;
 
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "avatar_id")
     private Avatar avatar;
+
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender")
+    private List<Message> sentMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    private List<Message> receivedMessages = new ArrayList<>();
+
 
     public User(String username, String email) {
         this.username = username;

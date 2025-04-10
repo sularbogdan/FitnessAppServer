@@ -1,4 +1,4 @@
-package com.fitnessapp.management.utils;
+package com.fitnessapp.management.config;
 
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
 import com.fitnessapp.management.repository.dto.UserSecurityDTO;

@@ -2,8 +2,8 @@ package com.fitnessapp.management.service;
 
 
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
-import com.fitnessapp.management.repository.dto.UserSecurityDTO;
 import com.fitnessapp.management.repository.dto.UserUpdateDTO;
+import com.fitnessapp.management.repository.entity.User;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import com.fitnessapp.management.security.request.RegisterRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface UserService {
@@ -22,7 +23,7 @@ public interface UserService {
     UserResponseDTO getUserByEmail(String email);
     UserResponseDTO getUserById(Long id);
     UserResponseDTO getUserByRole(Role role);
-    List<UserResponseDTO> getAllUsers();
+    List<User> getAllUsers();
     void deleteUser(Long id);
     void uploadAndSetAvatar(MultipartFile file, String username) throws IOException;
     void setAvatarById(Long avatarId, String username);

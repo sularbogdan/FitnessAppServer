@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,8 +24,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(@Param("email") String email);
 
     @Query("SELECT u FROM User u WHERE u.role = :role")
-    Optional<User> findUserByRole(@Param("role") Role role);
+    List<User> findAllByRole(@Param("role") Role role);
 
     @Query("SELECT u FROM User u JOIN u.refreshTokens rt WHERE rt = :refreshToken")
     Optional<User> findUserByRefreshToken(@Param("refreshToken") RefreshToken refreshToken);
+
+    @Query("SELECT u FROM User u WHERE u.role = :role")
+    Optional<User> findUserByRole(@Param("role") Role role);
+
 }

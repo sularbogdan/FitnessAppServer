@@ -11,7 +11,7 @@ import com.fitnessapp.management.repository.entity.User;
 import com.fitnessapp.management.security.request.RegisterRequest;
 import com.fitnessapp.management.security.response.UserDetailsImpl;
 import com.fitnessapp.management.service.UserService;
-import com.fitnessapp.management.utils.MapperConfig;
+import com.fitnessapp.management.config.MapperConfig;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
         this.avatarRepository = avatarRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     @Override
     public UserResponseDTO addUser(RegisterRequest request) {
         if (userRepository.findByUsernameOrEmail(request.getUsername(), request.getEmail()).isPresent()) {
@@ -50,12 +53,22 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.CLIENT);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Avatar defaultAvatar = avatarRepository.findById(1L)
+
+        Avatar defaultAvatar = avatarRepository.findFirstByFileName("avatar1.png")
                 .orElseThrow(() -> new RuntimeException("Default avatar not found"));
-        user.setAvatar(defaultAvatar);
+
+        Avatar clonedAvatar = new Avatar();
+        clonedAvatar.setFileName(UUID.randomUUID().toString());
+        clonedAvatar.setFileType(defaultAvatar.getFileType());
+        clonedAvatar.setData(defaultAvatar.getData());
+
+        user.setAvatar(clonedAvatar);
 
         return mapperConfig.mapToDto(userRepository.save(user), UserResponseDTO.class);
     }
+
+
+
 
     @Override
     public UserResponseDTO getUserByUsernameOrEmail(String username, String email){
@@ -94,9 +107,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return mapperConfig.mapToList(users, UserResponseDTO.class);
+    public List<User> getAllUsers() {
+        return userRepository.findAllByRole(Role.CLIENT);
     }
 
     @Override
@@ -117,7 +129,7 @@ public class UserServiceImpl implements UserService {
         avatar.setFileName(file.getOriginalFilename());
         avatar.setFileType(file.getContentType());
         avatar.setData(file.getBytes());
-        avatar.setUser(user);
+
         user.setAvatar(avatar);
         userRepository.save(user);
     }

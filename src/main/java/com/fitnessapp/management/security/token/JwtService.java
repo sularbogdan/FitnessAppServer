@@ -80,6 +80,16 @@ public class JwtService {
                 && !isTokenBlacklisted(token);
     }
 
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     public String generateToken(String username) {
         Map<String, Object> claims = objectMapper.convertValue(
                 userService.getUserByUsername(username, UserSecurityDTO.class),

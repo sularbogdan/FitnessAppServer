@@ -18,8 +18,9 @@ public class Avatar {
     @Column(name = "avatar_id")
     private Long id;
 
-    @Column(name = "file_name")
+    @Column(name = "file_name", unique = true)
     private String fileName;
+
 
     @Column(name = "file_type")
     private String fileType;
@@ -27,9 +28,7 @@ public class Avatar {
     @Column(name = "data", length = 10000)
     private byte[] data;
 
-    @OneToOne(mappedBy = "avatar")
-    @JsonBackReference
-    private User user;
+
 
     public Avatar(String fileName, byte[] data, String fileType) {
         this.fileName = fileName;

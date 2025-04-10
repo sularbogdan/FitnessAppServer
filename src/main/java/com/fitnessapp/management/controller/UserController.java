@@ -1,11 +1,13 @@
 package com.fitnessapp.management.controller;
 
+import com.fitnessapp.management.config.MapperConfig;
 import com.fitnessapp.management.exception.AvatarNotFoundException;
 import com.fitnessapp.management.repository.dto.AvatarDTO;
 
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
 import com.fitnessapp.management.repository.dto.UserSecurityDTO;
 import com.fitnessapp.management.repository.dto.UserUpdateDTO;
+import com.fitnessapp.management.repository.entity.User;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import com.fitnessapp.management.service.UserService;
 import com.fitnessapp.management.service.implementation.AvatarServiceImpl;
@@ -18,16 +20,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserServiceImpl userService;
     private final AvatarServiceImpl avatarService;
+    private final MapperConfig mapperConfig;
 
-    public UserController(UserServiceImpl userService, AvatarServiceImpl avatarService) {
+    public UserController(UserServiceImpl userService, AvatarServiceImpl avatarService, MapperConfig mapperConfig) {
         this.userService = userService;
         this.avatarService = avatarService;
+        this.mapperConfig = mapperConfig;
     }
 
     @GetMapping("/usernameOrEmail")
@@ -55,10 +60,15 @@ public class UserController {
         return userService.getUserByRole(role);
     }
 
-    @GetMapping
-    public List<UserResponseDTO> getAllUsers() {
-        return userService.getAllUsers();
+    @GetMapping("/all-users")
+    public ResponseEntity<List<UserResponseDTO>> getAllClients() {
+        List<User> clients = userService.getAllUsers();
+        List<UserResponseDTO> dtoList = clients.stream()
+                .map(user -> mapperConfig.mapToDto(user, UserResponseDTO.class))
+                .toList();
+        return ResponseEntity.ok(dtoList);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
@@ -75,9 +85,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
-
 
     @PostMapping("/upload-avatar")
     public ResponseEntity<String> uploadAvatar(@RequestParam("file") MultipartFile file,
@@ -105,6 +112,8 @@ public class UserController {
         UserResponseDTO userResponseDTO = userService.updateUserByUsername(username, userUpdateDTO);
         return userResponseDTO;
     }
+
+
 
 
 }
