@@ -17,6 +17,11 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
     private UserRepository userRepository;
 
+    public MessageServiceImpl(MessageRepository messageRepository, UserRepository userRepository){
+        this.messageRepository = messageRepository;
+        this.userRepository = userRepository;
+    }
+
     @Override
     public List<Message> getMessagesBetweenUsersAndAdmin(Long senderId, Long receiverId) {
         return messageRepository.findBySenderIdAndReceiverId(senderId, receiverId);
@@ -34,4 +39,21 @@ public class MessageServiceImpl implements MessageService {
         message.setTimestamp(LocalDateTime.now());
         return messageRepository.save(message);
     }
+
+    @Override
+    public List<User> getUsersUserChattedWith(Long userId) {
+        List<Message> messages = messageRepository.findAllMessagesByUser(userId);
+
+        return messages.stream()
+                .map(msg -> {
+                    if (msg.getSender().getId().equals(userId)) {
+                        return msg.getReceiver();
+                    } else {
+                        return msg.getSender();
+                    }
+                })
+                .distinct()
+                .toList();
+    }
+
 }
