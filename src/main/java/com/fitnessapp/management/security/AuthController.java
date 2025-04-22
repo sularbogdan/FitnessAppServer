@@ -116,6 +116,7 @@ public class AuthController {
                     new AuthResponse(
                             jwtService.extractExpiration(accessToken),
                             Date.from(refreshToken.getExpiryDate()),
+                            accessToken,
                             userData
                     ),
                     HttpStatus.OK

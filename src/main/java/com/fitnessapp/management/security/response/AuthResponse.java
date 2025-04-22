@@ -14,5 +14,6 @@ import java.util.Date;
 public class AuthResponse {
     private Date accessTokenExpiryDate;
     private Date refreshTokenExpiryDate;
+    private String accessToken;
     private UserSecurityDTO userData;
 }

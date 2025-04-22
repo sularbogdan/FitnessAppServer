@@ -20,7 +20,7 @@ public class MessageController {
 
     @GetMapping("/{senderId}/{receiverId}")
     public List<MessageDTO> getMessages(@PathVariable Long senderId, @PathVariable Long receiverId) {
-        return messageService.getMessagesBetweenUsersAndAdmin(senderId, receiverId).stream().map(msg -> {
+        return messageService.getMessagesBetweenUsers(senderId, receiverId).stream().map(msg -> {
             MessageDTO dto = new MessageDTO();
             dto.setSenderId(msg.getSender().getId());
             dto.setReceiverId(msg.getReceiver().getId());
