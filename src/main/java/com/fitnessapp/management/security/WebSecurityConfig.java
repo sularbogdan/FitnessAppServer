@@ -67,20 +67,19 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(publicRoutes)
-                                .permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/**")
-                                .permitAll()
-                                .requestMatchers(privateRoutes)
-                                .hasAnyRole(Role.CLIENT.name(), Role.ADMIN.name())
-                                .requestMatchers("/**")
-                                .hasRole(Role.ADMIN.name())
-                                .anyRequest()
-                                .authenticated()
+                        req
+                                .requestMatchers(publicRoutes).permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers(privateRoutes).hasAnyRole("CLIENT", "ADMIN")
+                                .requestMatchers("/**").hasRole(Role.ADMIN.name())
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+
+
 }

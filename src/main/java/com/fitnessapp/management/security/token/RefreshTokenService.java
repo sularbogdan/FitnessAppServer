@@ -104,6 +104,7 @@ public class RefreshTokenService {
         return new AuthResponse(
                 jwtService.extractExpiration(newAccessToken),
                 Date.from(newRefreshToken.getExpiryDate()),
+                newAccessToken,
                 new UserSecurityDTO());
     }
 
