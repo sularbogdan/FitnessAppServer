@@ -23,7 +23,4 @@ public class Feedback {
     @JoinColumn(name = "client_id", referencedColumnName = "user_id")
     private User client;
 
-    @ManyToOne
-    @JoinColumn(name = "trainer_id", referencedColumnName = "trainer_id")
-    private Trainers trainer;
 }

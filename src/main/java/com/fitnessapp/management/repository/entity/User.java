@@ -52,8 +52,6 @@ public class User {
     })
     private ImageDTO image;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Trainers trainer;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Memberships memberships;
