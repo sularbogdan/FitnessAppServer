@@ -13,4 +13,5 @@ public interface AppointmentService {
     AppointmentRequest requestAppointment(Long userId, Long trainerId, LocalDate date, LocalTime time);
     List<AppointmentRequest> getPendingRequests();
     AppointmentRequest updateStatus(Long id, Status status);
+    void deleteAppointment(Long id);
 }

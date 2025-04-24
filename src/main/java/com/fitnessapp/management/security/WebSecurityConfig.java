@@ -73,6 +73,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                 .requestMatchers(privateRoutes).hasAnyRole("CLIENT", "ADMIN")
                                 .requestMatchers("/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
+
+//                                                .anyRequest().permitAll()
+
+
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

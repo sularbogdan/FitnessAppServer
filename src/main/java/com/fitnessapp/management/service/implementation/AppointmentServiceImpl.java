@@ -44,11 +44,13 @@ public class AppointmentServiceImpl implements AppointmentService {
         request.setTrainer(trainer);
         request.setDate(date);
         request.setTime(time);
+
         request.setStatus(Status.PENDING);
         return appointmentRepo.save(request);
     }
 
     public List<AppointmentRequest> getPendingRequests() {
+
         return appointmentRepo.findByStatus(Status.PENDING);
     }
 
@@ -57,5 +59,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         req.setStatus(status);
         return appointmentRepo.save(req);
     }
+
+    public void deleteAppointment(Long id){
+        appointmentRepo.deleteById(id);
+    }
+
 }
 
