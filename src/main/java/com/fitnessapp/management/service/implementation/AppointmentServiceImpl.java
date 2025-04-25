@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,6 +25,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Autowired
     private UserRepository userRepo;
 
+    @Override
     public List<LocalTime> getAvailableHours(Long trainerId, LocalDate date) {
         List<AppointmentRequest> existing = appointmentRepo.findByTrainerIdAndDate(trainerId, date);
         List<LocalTime> taken = existing.stream().map(AppointmentRequest::getTime).toList();
@@ -34,7 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return allHours.stream().filter(h -> !taken.contains(h)).toList();
     }
-
+    @Override
     public AppointmentRequest requestAppointment(Long userId, Long trainerId, LocalDate date, LocalTime time) {
         User user = userRepo.findById(userId).orElseThrow();
         User trainer = userRepo.findById(trainerId).orElseThrow();
@@ -48,21 +50,30 @@ public class AppointmentServiceImpl implements AppointmentService {
         request.setStatus(Status.PENDING);
         return appointmentRepo.save(request);
     }
-
+    @Override
     public List<AppointmentRequest> getPendingRequests() {
 
         return appointmentRepo.findByStatus(Status.PENDING);
     }
-
+    @Override
     public AppointmentRequest updateStatus(Long id, Status status) {
         AppointmentRequest req = appointmentRepo.findById(id).orElseThrow();
         req.setStatus(status);
         return appointmentRepo.save(req);
     }
-
+    @Override
     public void deleteAppointment(Long id){
         appointmentRepo.deleteById(id);
     }
+    @Override
+    public List<AppointmentRequest> getAllAppointments(){
+         return  appointmentRepo.findAll();
+    }
+    @Override
+    public List<AppointmentRequest> getAppointmentsByUser(Long userId) {
+        return appointmentRepo.findAllByUserId(userId);
+    }
+
 
 }
 

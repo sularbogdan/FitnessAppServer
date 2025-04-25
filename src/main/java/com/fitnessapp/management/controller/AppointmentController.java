@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -91,5 +92,31 @@ public class AppointmentController {
         );
     }
 
+    @GetMapping("/getAllAppointments")
+    public List<AppointmentResponseDTO> getAllAppointments() {
+        return appointmentService.getAllAppointments()
+                .stream()
+                .map(req -> new AppointmentResponseDTO(
+                        req.getId(),
+                        req.getUser().getFirstName(),
+                        req.getUser().getLastName(),
+                        req.getDate(),
+                        req.getTime(),
+                        req.getStatus()
+                )).toList();
+    }
+
+    @GetMapping("/user-appointments")
+    public List<AppointmentResponseDTO> getUserAppointments(@RequestParam Long userId) {
+        return appointmentService.getAppointmentsByUser(userId).stream()
+                .map(req -> new AppointmentResponseDTO(
+                        req.getId(),
+                        req.getUser().getFirstName(),
+                        req.getUser().getLastName(),
+                        req.getDate(),
+                        req.getTime(),
+                        req.getStatus()
+                )).toList();
+    }
 
 }

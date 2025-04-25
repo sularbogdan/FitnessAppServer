@@ -6,6 +6,7 @@ import com.fitnessapp.management.repository.entity.enums.Status;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface AppointmentService {
 
@@ -14,4 +15,6 @@ public interface AppointmentService {
     List<AppointmentRequest> getPendingRequests();
     AppointmentRequest updateStatus(Long id, Status status);
     void deleteAppointment(Long id);
+    List<AppointmentRequest> getAllAppointments();
+    List<AppointmentRequest> getAppointmentsByUser(Long id);
 }
