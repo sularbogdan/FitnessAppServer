@@ -1,6 +1,7 @@
 package com.fitnessapp.management.service;
 
 
+import com.fitnessapp.management.repository.dto.ChangePasswordDTO;
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
 import com.fitnessapp.management.repository.dto.UserUpdateDTO;
 import com.fitnessapp.management.repository.entity.User;
@@ -29,6 +30,7 @@ public interface UserService {
     void setAvatarById(Long avatarId, String username);
     UserDetails loadUserByUsername(String username);
     UserResponseDTO updateUserByUsername(String username, UserUpdateDTO userUpdateDTO);
+    boolean changePassword(ChangePasswordDTO changePasswordDTO);
 
 
 

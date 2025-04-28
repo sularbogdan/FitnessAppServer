@@ -3,6 +3,7 @@ package com.fitnessapp.management.service.implementation;
 import com.fitnessapp.management.exception.*;
 import com.fitnessapp.management.repository.AvatarRepository;
 import com.fitnessapp.management.repository.UserRepository;
+import com.fitnessapp.management.repository.dto.ChangePasswordDTO;
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
 import com.fitnessapp.management.repository.dto.UserUpdateDTO;
 import com.fitnessapp.management.repository.entity.Avatar;
@@ -12,6 +13,7 @@ import com.fitnessapp.management.security.request.RegisterRequest;
 import com.fitnessapp.management.security.response.UserDetailsImpl;
 import com.fitnessapp.management.service.UserService;
 import com.fitnessapp.management.config.MapperConfig;
+import jakarta.servlet.http.PushBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -189,6 +191,27 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         return mapperConfig.mapToDto(user, UserResponseDTO.class);
+    }
+
+    @Override
+    public boolean changePassword(ChangePasswordDTO changePasswordDTO){
+        User user = userRepository.findByUsernameOrEmail(changePasswordDTO.getUsername(),
+                                                        changePasswordDTO.getEmail())
+                                                        .orElse(null);
+        if(user == null){
+            throw new UserNotFoundException("User not found!");
+        }
+        if(!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())){
+            throw new OldPasswordIncorrectException("Old password is incorrect");
+        }
+        if (passwordEncoder.matches(changePasswordDTO.getNewPassword(), user.getPassword())) {
+            throw new RuntimeException("New password must be different from the old password!");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.save(user);
+
+        return true;
     }
 
 }

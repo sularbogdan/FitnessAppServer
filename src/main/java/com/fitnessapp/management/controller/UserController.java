@@ -2,11 +2,8 @@ package com.fitnessapp.management.controller;
 
 import com.fitnessapp.management.config.MapperConfig;
 import com.fitnessapp.management.exception.AvatarNotFoundException;
-import com.fitnessapp.management.repository.dto.AvatarDTO;
+import com.fitnessapp.management.repository.dto.*;
 
-import com.fitnessapp.management.repository.dto.UserResponseDTO;
-import com.fitnessapp.management.repository.dto.UserSecurityDTO;
-import com.fitnessapp.management.repository.dto.UserUpdateDTO;
 import com.fitnessapp.management.repository.entity.User;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import com.fitnessapp.management.service.UserService;
@@ -112,6 +109,14 @@ public class UserController {
         UserResponseDTO userResponseDTO = userService.updateUserByUsername(username, userUpdateDTO);
         return userResponseDTO;
     }
+
+    @Transactional
+    @PostMapping("/change-password")
+    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+        userService.changePassword(changePasswordDTO);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 
