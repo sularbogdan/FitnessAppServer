@@ -71,10 +71,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                 .requestMatchers(publicRoutes).permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(privateRoutes).hasAnyRole("CLIENT", "ADMIN")
-                                .requestMatchers("/**").hasRole(Role.ADMIN.name())
+                            //    .requestMatchers("/**").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
 
-//                                                .anyRequest().permitAll()
+                  //                            .anyRequest().permitAll()
 
 
                 )

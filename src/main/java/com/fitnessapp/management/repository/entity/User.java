@@ -80,6 +80,13 @@ public class User {
         this.email = email;
     }
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DietPlanEntity> dietPlans;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DietPlanEntity> favoriteDiets;
+
+
     @Override
     public String toString() {
         return "User{" +
