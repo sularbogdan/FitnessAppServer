@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface FavoriteMealRepository extends JpaRepository<FavoriteMeal, Long> {
     List<FavoriteMeal> findAllByUser(User user);
-    Optional<FavoriteMeal> findBySpoonacularIdAndUser(Long spoonacularId, User user);
+
 }

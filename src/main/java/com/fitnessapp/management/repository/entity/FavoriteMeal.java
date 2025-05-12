@@ -18,8 +18,6 @@ public class FavoriteMeal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "spoonacular_id")
-    private Long spoonacularId;
 
     private String title;
     private String imageType;

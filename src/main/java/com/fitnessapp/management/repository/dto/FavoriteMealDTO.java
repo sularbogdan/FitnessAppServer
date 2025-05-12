@@ -6,7 +6,6 @@ import java.util.List;
 
 @Data
 public class FavoriteMealDTO {
-    private Long spoonacularId;
     private String title;
     private String imageType;
     private String sourceUrl;

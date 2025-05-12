@@ -29,7 +29,6 @@ public class DietServiceImpl implements DietService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         FavoriteMeal meal = FavoriteMeal.builder()
-                .spoonacularId(favoriteMealDTO.getSpoonacularId())
                 .title(favoriteMealDTO.getTitle())
                 .imageType(favoriteMealDTO.getImageType())
                 .sourceUrl(favoriteMealDTO.getSourceUrl())
@@ -50,12 +49,12 @@ public class DietServiceImpl implements DietService {
     }
 
     @Override
-    public void deleteFavoriteMeal(Long userId, Long spoonacularId) {
+    public void deleteFavoriteMeal(Long userId, Long mealId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        FavoriteMeal meal = favoriteMealRepository.findBySpoonacularIdAndUser(spoonacularId, user)
-                .orElseThrow(() -> new RuntimeException("Meal not found or not owned by user"));
+        FavoriteMeal meal = favoriteMealRepository.findById(mealId)
+                .orElseThrow(() -> new RuntimeException("Meal not found!"));
 
         favoriteMealRepository.delete(meal);
     }
