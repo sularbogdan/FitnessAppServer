@@ -31,6 +31,7 @@ public interface UserService {
     UserDetails loadUserByUsername(String username);
     UserResponseDTO updateUserByUsername(String username, UserUpdateDTO userUpdateDTO);
     boolean changePassword(ChangePasswordDTO changePasswordDTO);
+    void resetPassword(String email);
 
 
 

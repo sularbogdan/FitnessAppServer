@@ -117,8 +117,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
-
-
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        userService.resetPassword(email);
+        return ResponseEntity.ok("Password has been reset. Check your email.");
+    }
 
 }

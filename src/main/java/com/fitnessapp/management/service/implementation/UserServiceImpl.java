@@ -11,6 +11,7 @@ import com.fitnessapp.management.repository.entity.enums.Role;
 import com.fitnessapp.management.repository.entity.User;
 import com.fitnessapp.management.security.request.RegisterRequest;
 import com.fitnessapp.management.security.response.UserDetailsImpl;
+import com.fitnessapp.management.service.EmailService;
 import com.fitnessapp.management.service.UserService;
 import com.fitnessapp.management.config.MapperConfig;
 import jakarta.servlet.http.PushBuilder;
@@ -31,13 +32,19 @@ public class UserServiceImpl implements UserService {
     private final MapperConfig mapperConfig;
     private final AvatarRepository avatarRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
 
-    public UserServiceImpl(UserRepository userRepository, MapperConfig mapperConfig, AvatarRepository avatarRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           MapperConfig mapperConfig,
+                           AvatarRepository avatarRepository,
+                           PasswordEncoder passwordEncoder,
+                           EmailService emailService) {
         this.userRepository = userRepository;
         this.mapperConfig = mapperConfig;
         this.avatarRepository = avatarRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
@@ -214,7 +221,22 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-}
+    @Override
+    public void resetPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailNotFoundException("Email not found!"));
+
+        String tempPassword = UUID.randomUUID().toString().substring(0, 10);
+
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        userRepository.save(user);
+
+        emailService.sendResetPasswordHtmlEmail(
+                email,
+                tempPassword
+        );
+    }
+    }
 
 
 
