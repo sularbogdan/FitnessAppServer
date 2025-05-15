@@ -1,6 +1,6 @@
 package com.fitnessapp.management.repository.entity;
 
-import com.fitnessapp.management.repository.entity.enums.MembershipType;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,11 +19,12 @@ public class Memberships {
     @Column(name = "membership_id")
     private Long id;
 
-    @Column(name = "type")
-    private MembershipType membershipType;
-
     @Column(name = "start_date")
     private Date startDate;
+
+    @ManyToOne
+    @JoinColumn(name = "plan_id")
+    private SubscriptionPlan subscriptionPlan;
 
     @Column(name = "end_date")
     private Date endDate;

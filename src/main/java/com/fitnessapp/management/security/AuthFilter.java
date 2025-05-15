@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class AuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final SessionService sessionService;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Value("${gym.app.publicRoutes}")
     private String[] publicRoutes;
@@ -41,8 +43,7 @@ public class AuthFilter extends OncePerRequestFilter {
             String requestUri = request.getRequestURI();
 
             boolean isPublic = Arrays.stream(publicRoutes)
-                    .map(route -> route.replaceAll("\\*", ""))
-                    .anyMatch(requestUri::contains);
+                    .anyMatch(pattern -> pathMatcher.match(pattern, requestUri));
 
             if (isPublic) {
                 filterChain.doFilter(request, response);
