@@ -33,7 +33,7 @@ public class StripeServiceImpl implements StripeService {
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
                                                 .setCurrency("ron")
-                                                .setUnitAmount(plan.getPriceInRon())
+                                                .setUnitAmount(plan.getPriceInRon() * 100)
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName(plan.getName())

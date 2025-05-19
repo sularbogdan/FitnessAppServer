@@ -17,9 +17,9 @@ public class PlanSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (repository.count() == 0) {
-            repository.save(new SubscriptionPlan(null, "Basic", 3, 200));
-            repository.save(new SubscriptionPlan(null, "Standard", 4, 250));
-            repository.save(new SubscriptionPlan(null, "Premium", 5, 300));
+            repository.save(new SubscriptionPlan(null, "Basic", 3, 20000));
+            repository.save(new SubscriptionPlan(null, "Standard", 4, 25000));
+            repository.save(new SubscriptionPlan(null, "Premium", 5, 30000));
         }
     }
 }
