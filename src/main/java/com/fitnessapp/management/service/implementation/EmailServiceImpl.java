@@ -4,7 +4,6 @@ import com.fitnessapp.management.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
 
             helper.setTo(to);
             helper.setSubject("Reset password - FitnessApp");
-            helper.setText(htmlTemplate, true); // true = HTML
+            helper.setText(htmlTemplate, true);
 
             emailSender.send(message);
 
