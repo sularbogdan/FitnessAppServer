@@ -53,7 +53,7 @@ public class User {
     private ImageDTO image;
 
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Memberships memberships;
 
 

@@ -20,7 +20,7 @@ public class StripeServiceImpl implements StripeService {
     @Override
     public Session createCheckoutSession(PlanSelectionRequest request) throws Exception {
         SubscriptionPlan plan = planService.getById(request.getPlanId());
-
+        System.out.println("Creating session for userId: " + request.getUserId() + " planId: " + plan.getId());
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl("http://localhost:8080/success")

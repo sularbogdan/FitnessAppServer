@@ -1,5 +1,6 @@
 package com.fitnessapp.management.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnessapp.management.exception.PlanNotFoundException;
 import com.fitnessapp.management.exception.UserNotFoundException;
@@ -11,7 +12,7 @@ import com.fitnessapp.management.repository.entity.SubscriptionPlan;
 import com.fitnessapp.management.repository.entity.User;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
-import com.stripe.model.checkout.Session;
+import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.net.Webhook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -46,45 +47,50 @@ public class StripeWebhookController {
                                       @RequestBody String payload) {
         try {
             Event event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
-
-            System.out.println("Stripe event type: " + event.getType());
-
-            if ("checkout.session.completed".equals(event.getType())) {
-                Session session = objectMapper.readValue(event.getData().getObject().toString(), Session.class);
-
-                String clientReferenceId = session.getClientReferenceId();
-                String planId = session.getMetadata().get("planId");
-
-                System.out.println("ClientReferenceId: " + clientReferenceId);
-                System.out.println("PlanId from metadata: " + planId);
-
-                if (clientReferenceId == null || planId == null) {
-                    System.out.println("One of the required IDs is null!");
-                    return "Missing metadata";
-                }
-
-
-                User user = userRepository.findById(Long.parseLong(clientReferenceId))
-                        .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-                SubscriptionPlan plan = planRepository.findById(Long.parseLong(planId))
-                        .orElseThrow(() -> new PlanNotFoundException("Plan not found"));
-
-                Memberships membership = new Memberships();
-                membership.setUser(user);
-                membership.setSubscriptionPlan(plan);
-                membership.setStartDate(Date.from(Instant.now()));
-                membership.setEndDate(Date.from(Instant.now().plusSeconds(30L * 24 * 60 * 60)));
-                membership.setPrice(plan.getPriceInRon() / 100f);
-
-                membershipRepository.save(membership);
+            if (!"checkout.session.completed".equals(event.getType())) {
+                return "Ignored event";
             }
 
+            EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
+            if (deserializer.getRawJson().isEmpty()) {
+                return "Session deserialization failed";
+            }
+
+            JsonNode dataObject = objectMapper.readTree(deserializer.getRawJson());
+            String clientReferenceId = dataObject.get("client_reference_id").asText();
+            String planId = dataObject.get("metadata").get("planId").asText();
+
+            if (clientReferenceId == null || planId == null) {
+                return "Missing metadata";
+            }
+
+            Long userId = Long.parseLong(clientReferenceId);
+            Long subPlanId = Long.parseLong(planId);
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+            SubscriptionPlan plan = planRepository.findById(subPlanId)
+                    .orElseThrow(() -> new PlanNotFoundException("Plan not found"));
+
+            Memberships existing = membershipRepository.findByUser(user);
+            if (existing != null) {
+                membershipRepository.delete(existing);
+            }
+
+            Memberships membership = new Memberships();
+            membership.setUser(user);
+            membership.setSubscriptionPlan(plan);
+            membership.setStartDate(Date.from(Instant.now()));
+            membership.setEndDate(Date.from(Instant.now().plusSeconds(30L * 24 * 60 * 60)));
+            membership.setPrice(plan.getPriceInRon() / 100f);
+
+            membershipRepository.save(membership);
             return "Received";
+
         } catch (SignatureVerificationException e) {
             return "Invalid signature";
         } catch (Exception e) {
-            e.printStackTrace();
             return "Error: " + e.getMessage();
         }
     }

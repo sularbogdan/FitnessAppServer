@@ -1,6 +1,7 @@
 package com.fitnessapp.management.service;
 
 import com.fitnessapp.management.repository.entity.AppointmentRequest;
+import com.fitnessapp.management.repository.entity.User;
 import com.fitnessapp.management.repository.entity.enums.Status;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,5 @@ public interface AppointmentService {
     void deleteAppointment(Long id);
     List<AppointmentRequest> getAllAppointments();
     List<AppointmentRequest> getAppointmentsByUser(Long id);
+    boolean hasActiveMembershipWithAvailableSession(User user);
 }
