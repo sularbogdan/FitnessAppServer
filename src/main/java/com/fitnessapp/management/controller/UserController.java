@@ -12,6 +12,7 @@ import com.fitnessapp.management.service.implementation.UserServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/all-users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> getAllClients() {
         List<User> clients = userService.getAllUsers();
         List<UserResponseDTO> dtoList = clients.stream()

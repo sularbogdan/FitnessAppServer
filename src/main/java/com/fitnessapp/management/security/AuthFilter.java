@@ -58,7 +58,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
                             if (jwtService.validateToken(token, userDetails)) {
                                 String role = jwtService.extractClaim(token, claims -> claims.get("role", String.class));
-                                GrantedAuthority authority = new SimpleGrantedAuthority(role);
+                                GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
 
                                 UsernamePasswordAuthenticationToken auth =
                                         new UsernamePasswordAuthenticationToken(
