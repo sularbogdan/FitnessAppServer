@@ -15,6 +15,7 @@ import com.fitnessapp.management.service.EmailService;
 import com.fitnessapp.management.service.UserService;
 import com.fitnessapp.management.config.MapperConfig;
 import jakarta.servlet.http.PushBuilder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -236,7 +237,14 @@ public class UserServiceImpl implements UserService {
                 tempPassword
         );
     }
+
+    @Override
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
+}
 
 
 

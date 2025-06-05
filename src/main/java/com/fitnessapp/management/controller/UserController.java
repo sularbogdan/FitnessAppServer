@@ -126,4 +126,11 @@ public class UserController {
         return ResponseEntity.ok("Password has been reset. Check your email.");
     }
 
+    @GetMapping("/current-user")
+    public UserResponseDTO getCurrentUserEndpoint() {
+        User user = userService.getCurrentUser();
+        return mapperConfig.mapToDto(user, UserResponseDTO.class);
+    }
+
+
 }
