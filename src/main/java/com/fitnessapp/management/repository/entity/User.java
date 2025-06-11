@@ -1,6 +1,5 @@
 package com.fitnessapp.management.repository.entity;
 
-import com.fitnessapp.management.repository.dto.ImageDTO;
 import com.fitnessapp.management.repository.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,13 +43,6 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "fileName", column = @Column(name = "custom_avatar_file_name")),
-            @AttributeOverride(name = "image", column = @Column(name = "custom_avatar_data", length = 10000)),
-            @AttributeOverride(name = "fileType", column = @Column(name = "custom_avatar_file_type"))
-    })
-    private ImageDTO image;
 
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -68,10 +60,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender")
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> sentMessages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "receiver")
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> receivedMessages = new ArrayList<>();
 
 
@@ -88,6 +80,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FavoriteMeal> favoriteMeals = new ArrayList<>();
+
 
 
     @Override

@@ -125,8 +125,29 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found!"));
+        
+        if (user.getSentMessages() != null) {
+            user.getSentMessages().clear();
+        }
+        if (user.getReceivedMessages() != null) {
+            user.getReceivedMessages().clear();
+        }
+        if (user.getFavoriteMeals() != null) {
+            user.getFavoriteMeals().clear();
+        }
+        if (user.getNotes() != null) {
+            user.getNotes().clear();
+        }
+        if (user.getFeedbacks() != null) {
+            user.getFeedbacks().clear();
+        }
+        if (user.getRefreshTokens() != null) {
+            user.getRefreshTokens().clear();
+        }
+
         userRepository.delete(user);
     }
+
 
     @Override
     public void uploadAndSetAvatar(MultipartFile file, String username) throws IOException {
@@ -184,10 +205,6 @@ public class UserServiceImpl implements UserService {
                         return new AvatarNotFoundException("Avatar not found!");
                     });
             user.setAvatar(mapperConfig.mapToDto(avatar, Avatar.class));
-        }
-
-        if (userUpdateDTO.getUpdatedImage()) {
-            user.setImage(userUpdateDTO.getImage());
         }
 
         if (userUpdateDTO.getFirstName() != null) {
