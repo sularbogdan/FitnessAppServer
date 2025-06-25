@@ -23,15 +23,15 @@ public class AdminUserInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        String username = "sularvlad";
+        String username = "admin";
         if (userRepository.findByUsername(username).isEmpty()) {
             User admin = new User();
-            admin.setUsername("sularvlad");
-            admin.setEmail("sularvlad@yahoo.com");
-            admin.setPassword(passwordEncoder.encode("vlad123"));
+            admin.setUsername("admin");
+            admin.setEmail("admin@example.com");
+            admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setRole(Role.ADMIN);
-            admin.setFirstName("Sular");
-            admin.setLastName("Vlad");
+            admin.setFirstName("Admin");
+            admin.setLastName("Admin");
             admin.setActive(true);
 
             userRepository.save(admin);
