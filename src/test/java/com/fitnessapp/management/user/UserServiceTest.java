@@ -5,7 +5,9 @@ import com.fitnessapp.management.exception.UserNotFoundException;
 import com.fitnessapp.management.repository.AvatarRepository;
 import com.fitnessapp.management.repository.UserRepository;
 import com.fitnessapp.management.repository.dto.UserResponseDTO;
+import com.fitnessapp.management.repository.dto.UserUpdateDTO;
 import com.fitnessapp.management.repository.entity.User;
+import com.fitnessapp.management.service.EmailService;
 import com.fitnessapp.management.service.UserService;
 import com.fitnessapp.management.service.implementation.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -31,6 +35,12 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserServiceImpl userService;
+
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private User mockUser;
     private UserResponseDTO mockDTO;
@@ -82,5 +92,38 @@ public class UserServiceTest {
         assertEquals("test@test.com", result.getEmail());
         verify(userRepository).findByEmail("test@test.com");
     }
+
+    @Test
+    void testGetUserByUsername(){
+        when(userRepository.findByUsername("test")).thenReturn(Optional.of(mockUser));
+        when(mapperConfig.mapToDto(mockUser, UserResponseDTO.class)).thenReturn(mockDTO);
+        UserResponseDTO responseDTO = userService.getUserByUsername("test", UserResponseDTO.class);
+        assertEquals("test", responseDTO.getUsername());
+        verify(userRepository).findByUsername("test");
+    }
+
+    @Test
+    void testResetPassword() {
+        userService = new UserServiceImpl(userRepository, mapperConfig, null, passwordEncoder, emailService);
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(mockUser));
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        userService.resetPassword("test@test.com");
+        verify(userRepository).save(mockUser);
+        verify(emailService).sendResetPasswordHtmlEmail(eq("test@test.com"), anyString());
+    }
+
+    @Test
+    void testUpdateUserByUsername() {
+        UserUpdateDTO updateDTO = new UserUpdateDTO();
+        updateDTO.setFirstName("NewFirst");
+        updateDTO.setLastName("NewLast");
+        when(userRepository.findByUsername("test")).thenReturn(Optional.of(mockUser));
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        when(mapperConfig.mapToDto(mockUser, UserResponseDTO.class)).thenReturn(mockDTO);
+        UserResponseDTO result = userService.updateUserByUsername("test", updateDTO);
+        assertEquals("test", result.getUsername());
+        verify(userRepository).save(mockUser);
+    }
+
 
 }
